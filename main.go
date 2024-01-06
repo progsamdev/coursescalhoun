@@ -6,6 +6,8 @@ import (
 )
 
 func handlerFunc(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8") //specify the type of content so browser can handle it properly // set instead of add so we override any other setting
 	fmt.Fprint(w, "<h1> Welcome to my cool site! </h1>")
 	//w is responsable for the response
 	//r is the request
