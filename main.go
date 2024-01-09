@@ -5,8 +5,6 @@ import (
 	"net/http"
 )
 
-const PAGE_NOT_FOUND = "PAGE NOT FOUND"
-
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8") //specify the type of content so browser can handle it properly // set instead of add so we override any other setting
@@ -28,14 +26,8 @@ func pathHandler(w http.ResponseWriter, r *http.Request) {
 	case "/contact":
 		contactHandler(w, r)
 	default:
-		msg := PAGE_NOT_FOUND
-		errorHandler(w, r, msg, http.StatusNotFound)
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	}
-}
-
-func errorHandler(w http.ResponseWriter, r *http.Request, msg string, status int) {
-	w.WriteHeader(status)
-	fmt.Fprintf(w, "%s : %v", msg, status)
 }
 
 func main() {
