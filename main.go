@@ -3,30 +3,18 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
+
+	"github.com/go-chi/chi"
 )
 
-type Router struct{}
-
-func (router Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
-	switch r.URL.Path {
-	case "/":
-		homeHandler(w, r)
-	case "/contact":
-		contactHandler(w, r)
-	case "/faq":
-		faqHandler(w, r)
-	default:
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-	}
-}
-
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8") //specify the type of content so browser can handle it properly // set instead of add so we override any other setting
-	fmt.Fprint(w, "<h1> Welcome to my cool site! </h1>")
-	//w is responsable for the response
-	//r is the request
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	color := chi.URLParam(r, "color")
+	color = strings.Trim(color, "{}")
+	html := fmt.Sprintf("<h1 style='background-color: %s;'> Welcome to my AA site eba 2! </h1>", color)
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, html)
 }
 
 func contactHandler(w http.ResponseWriter, r *http.Request) {
@@ -56,27 +44,12 @@ func faqHandler(w http.ResponseWriter, r *http.Request) {
 	`)
 }
 
-// func pathHandler(w http.ResponseWriter, r *http.Request) {
-
-// 	switch r.URL.Path {
-// 	case "/":
-// 		homeHandler(w, r)
-// 	case "/contact":
-// 		contactHandler(w, r)
-// 	default:
-// 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-// 	}
-// }
-
 func main() {
-	//http.HandleFunc("/", pathHandler) // "/" path, homeHandler is the func that will process the web request
-	//	http.HandleFunc("/contact", contactHandler)
-
-	// http.Handler -> interface with the ServeHTTP method
-	// http.Handle("/", http.Handler) => handle receives a Handler
-	// http.HandlerFunc -> a function type that accepts same args as ServeHTTP method. also implements http.Handler
-	// http.HandleFunc("/contact", contactHandler) -> receives a handlerFunc
-	var router Router
+	r := chi.NewRouter()
+	r.Get("/", homeHandler)
+	r.Get("/{color}", homeHandler)
+	r.Get("/contact", contactHandler)
+	r.Get("/faq", faqHandler)
 	fmt.Println("Starting the server on :3000...")
-	http.ListenAndServe(":3000", router)
+	http.ListenAndServe(":3000", r)
 }
