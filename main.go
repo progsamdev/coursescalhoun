@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"html/template"
+	"log"
 	"net/http"
 	"strings"
 
@@ -11,9 +13,23 @@ import (
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	html := "<h1'> Welcome to my AA site eba 2! </h1>"
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, html)
+
+	tpl, err := template.ParseFiles("templates/home.gohtml")
+	if err != nil {
+		log.Printf("parsing template %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = tpl.Execute(w, nil)
+	if err != nil {
+		log.Printf("there was an error executing template  %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// w.WriteHeader(http.StatusOK)
+	// fmt.Fprint(w)
 }
 
 func contactHandler(w http.ResponseWriter, r *http.Request) {
