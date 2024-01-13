@@ -44,7 +44,7 @@ func faqHandler(w http.ResponseWriter, r *http.Request) {
 	<h2> Q: How long does it take to receive a response? </h2>
 	<p> A: I strive to respond to emails as promptly as possible. However, response times may vary based on workload and other commitments.</p>
 
-	<h2> Q: Do you have a social media presence? </h2>
+	<h2> Q: Do you have a social media? </h2>
 	<p> A: At the moment, I don't have active social media profiles. Email is the best way to get in touch.</p>`
 
 	fmt.Fprint(w, html)
