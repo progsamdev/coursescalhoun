@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 )
 
-func executeTemplate(w http.ResponseWriter, pathFile string) {
+func executeTemplate(w http.ResponseWriter, pathFile string, data any) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	tpl, err := template.ParseFiles(pathFile)
 	if err != nil {
@@ -19,29 +19,28 @@ func executeTemplate(w http.ResponseWriter, pathFile string) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	err = tpl.Execute(w, nil)
+	err = tpl.Execute(w, data)
 	if err != nil {
 		log.Printf("there was an error executing template  %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	tplPath := filepath.Join("templates", "home.gohtml")
-	executeTemplate(w, tplPath)
+	us := getUserMock()
+	executeTemplate(w, tplPath, us)
 }
 
 func contactHandler(w http.ResponseWriter, r *http.Request) {
 	tplPath := filepath.Join("templates", "contact.gohtml")
-	executeTemplate(w, tplPath)
+	executeTemplate(w, tplPath, nil)
 }
 
 func faqHandler(w http.ResponseWriter, r *http.Request) {
 	tplPath := filepath.Join("templates", "faq.gohtml")
-	executeTemplate(w, tplPath)
+	executeTemplate(w, tplPath, nil)
 }
 
 func main() {
