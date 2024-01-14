@@ -2,17 +2,53 @@ package main
 
 import (
 	"fmt"
+	"html/template"
+	"log"
 	"net/http"
+	"path/filepath"
+
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 )
 
-func handlerFunc(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "<h1> Welcome to my awesome site! </h1>")
-	//w is responsable for the response
-	//r is the request
+func executeTemplate(w http.ResponseWriter, pathFile string, data any) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	tpl, err := template.ParseFiles(pathFile)
+	if err != nil {
+		log.Printf("parsing template %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = tpl.Execute(w, data)
+	if err != nil {
+		log.Printf("there was an error executing template  %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	tplPath := filepath.Join("templates", "home.gohtml")
+	us := getUserMock()
+	executeTemplate(w, tplPath, us)
+}
+
+func contactHandler(w http.ResponseWriter, r *http.Request) {
+	tplPath := filepath.Join("templates", "contact.gohtml")
+	executeTemplate(w, tplPath, nil)
+}
+
+func faqHandler(w http.ResponseWriter, r *http.Request) {
+	tplPath := filepath.Join("templates", "faq.gohtml")
+	executeTemplate(w, tplPath, nil)
 }
 
 func main() {
-	http.HandleFunc("/", handlerFunc) // "/" path, handlerFunc is the func that will process the web request
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Get("/", homeHandler)
+	r.Get("/contact", contactHandler)
+	r.Get("/faq", faqHandler)
 	fmt.Println("Starting the server on :3000...")
-	http.ListenAndServe(":3000", nil) //build server in port 3000
+	http.ListenAndServe(":3000", r)
 }

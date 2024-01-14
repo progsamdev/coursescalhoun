@@ -1,0 +1,6 @@
+<h1> Welcome to my site! </h1>
+<p> Your name is: {{.Name}}</p>
+<p> You are {{.Age}} years old</p>
+<p> Your Last Access was {{.AccessData.FormattedLastAccess}}</p>
+
+{{if .IsAdmin}} You are admin! {{else}} You are regular user{{end}}
