@@ -12,7 +12,6 @@ type Template struct {
 }
 
 func Parse(filePath string) (Template, error) {
-
 	tpl, err := template.ParseFiles(filePath)
 	if err != nil {
 		log.Printf("parsing template %v", err)
@@ -24,7 +23,7 @@ func Parse(filePath string) (Template, error) {
 	return t, nil
 }
 
-func (t Template) execute(w http.ResponseWriter, data interface{}) {
+func (t Template) Execute(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	err := t.htmlTpl.Execute(w, data)
 	if err != nil {

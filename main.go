@@ -11,7 +11,7 @@ import (
 	"github.com/progsamdev/coursescalhoun/views"
 )
 
-func executeTemplate(w http.ResponseWriter, filepath string, data any) {
+func executeTemplate(w http.ResponseWriter, filepath string, data interface{}) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	t, err := views.Parse(filepath)
 	if err != nil {
@@ -20,8 +20,7 @@ func executeTemplate(w http.ResponseWriter, filepath string, data any) {
 		return
 	}
 
-	err = t.Execute(w, nil)
-
+	t.Execute(w, data)
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
