@@ -20,7 +20,7 @@ func getUserMock() *UserMock {
 	us := UserMock{
 		Name:    "Mock Silva",
 		Age:     23,
-		IsAdmin: false,
+		IsAdmin: true,
 		AccessData: UserAccessData{
 			NumberOfAccess:      12,
 			LastAccess:          access,
