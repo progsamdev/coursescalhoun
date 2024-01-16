@@ -49,6 +49,9 @@ func main() {
 	r.Get("/", homeHandler)
 	r.Get("/contact", contactHandler)
 	r.Get("/faq", faqHandler)
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Page Not Found", http.StatusNotFound)
+	})
 	fmt.Println("Starting the server on :3000...")
 	http.ListenAndServe(":3000", r)
 }
