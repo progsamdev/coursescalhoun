@@ -11,16 +11,23 @@ type Template struct {
 	htmlTpl *template.Template
 }
 
-func Parse(filePath string) (Template, error) {
+func Must(t *Template, err error) *Template {
+	if err != nil {
+		panic(err)
+	}
+	return t
+}
+
+func Parse(filePath string) (*Template, error) {
 	tpl, err := template.ParseFiles(filePath)
 	if err != nil {
 		log.Printf("parsing template %v", err)
-		return Template{}, fmt.Errorf("parsing template: %w", err)
+		return &Template{}, fmt.Errorf("parsing template: %w", err)
 	}
 	t := Template{
 		htmlTpl: tpl,
 	}
-	return t, nil
+	return &t, nil
 }
 
 func (t Template) Execute(w http.ResponseWriter, data interface{}) {
