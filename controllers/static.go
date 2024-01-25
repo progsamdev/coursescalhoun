@@ -20,7 +20,7 @@ func FAQ(tpl *views.Template) http.HandlerFunc {
 	}{
 		{
 			Question: "Q: How can I contact you?",
-			Answer:   `A: You can reach me via email at <a href="mailto:samuel.msbr@gmail.com">samuel.msbr@gmail.com" </a>`,
+			Answer:   `A: You can reach me via email at <a href="mailto:samuel.msbr@gmail.com">samuel.msbr@gmail.com </a>`,
 		},
 		{
 			Question: "Q: What services do you provide?",
