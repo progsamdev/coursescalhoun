@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	r := chi.NewRouter()
+	r := chi.NewRouter() //chi->new Router
 	r.Use(middleware.Logger)
 
 	tpl := views.Must(views.ParseFS(templates.FS, "home.gohtml", "tailwind.gohtml"))

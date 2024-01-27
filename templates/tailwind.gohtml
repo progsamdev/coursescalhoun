@@ -6,25 +6,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"> 
 </head>
-<body>
-
+<body class="flex flex-col h-screen">
     <header class="bg-gradient-to-r from-green-400 to-blue-500">
         <nav class="px-8 py-6 flex items-center text-white">
             <div class="text-4xl pr-8"> LensLocked </div>
             <div class="flex-grow text-center text-lg font-semibold " >
-                <a class="pr-8 hover:text-blue-300" href="/"> Home </a>
-                <a class="pr-8 hover:text-blue-300" href="/contact"> Contact </a>
-                <a class="pr-8 hover:text-blue-300" href="/faq"> FAQ </a>
+                <a class="pr-8 hover:text-green-300" href="/"> Home </a>
+                <a class="pr-8 hover:text-green-300" href="/contact"> Contact </a>
+                <a class="pr-8 hover:text-green-300" href="/faq"> FAQ </a>
             </div>
              <div class="text-4 pr-8">
-                <a class="pr-2 hover:text-blue-100" href="#"> Sign in </a>
+                <a class="pr-2 hover:text-green-300" href="#"> Sign in </a>
                 <a class="p-1 bg-green-400 rounded-sm hover:bg-white hover:text-green-400" href="#"> Sign up </a>                 
             </div>
         </nav>
-    </header>
+    </header> 
 
- {{end}}
- {{define "footer"}}
+{{end}}
+
+{{define "footer"}} 
+    <footer class="bg-gradient-to-r from-green-400 to-blue-500">       
+{{end}}
+</footer>  
 </body>
 </html>
-{{end}}

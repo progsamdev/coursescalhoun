@@ -1,13 +1,22 @@
 {{template "header"}}
-<h1 >FAQ!</h1> 
-<ul>
-    {{range .}}
-       {{template "qa" .}}
-    {{end}}
-</ul>
+  
+    <article class="flex-grow flex items-center justify-center"> 
+        <div>
+        <h2 class="text-2xl font-semibold mb-4 text-center text-green-800">Frequently Asked Questions</h2>
+        <ul class="grid grid-cols-2 gap-16 border-double border-4 border-green-100">
+            {{range .}}      
+                {{template "qa" .}}
+            {{end}}  
+        </ul>
+    </div>
+    </article> 
 
-{{define "qa"}}
-    <li><b>{{.Question}} </b> {{.Answer}}</li>
+{{define "qa"}} 
+    <li class="border-b border-green-100 m-2">
+        <span class="block text-lg text-green-800 font-bold">{{.Question}}</span>
+        <span class="block text-sm text-gray-600 my-2">{{.Answer}}</span>
+    </li>
 {{end}}
 
-{{template "footer"}}
+{{template "footer"}} 
+    <p>FAQ footer </p> 
