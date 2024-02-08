@@ -27,7 +27,8 @@ func main() {
 		"signup.gohtml", "tailwind.gohtml",
 	))
 	r.Get("/signup", usersC.New)
-	r.Post("/users", usersC.Create)
+
+	r.Post("/signup", usersC.Create)
 
 	tpl = views.Must(views.ParseFS(templates.FS, "faq.gohtml", "tailwind.gohtml"))
 	r.Get("/faq", controllers.FAQ(tpl))

@@ -15,7 +15,6 @@ func (u Users) New(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		Email string
 	}
-
 	data.Email = r.FormValue("email")
 	u.Templates.New.Execute(w, data)
 }
