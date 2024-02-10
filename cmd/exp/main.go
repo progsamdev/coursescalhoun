@@ -1,38 +1,26 @@
 package main
 
 import (
-	"errors"
+	"database/sql"
 	"fmt"
+	"os"
+
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 func main() {
-	err := CreateUser()
-	fmt.Println(err)
-	err = CreateOrg()
-	fmt.Println(err)
-
-}
-
-func Connect() error {
-	return errors.New("connection failed")
-}
-
-func CreateUser() error {
-	err := Connect()
+	conn, err := sql.Open("pgx", "host=localhost port=5432 user=baloo password=junglebook dbname=lenslocked sslmode=disable")
 	if err != nil {
-		return fmt.Errorf("error connecting: %w", err)
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		panic(err)
+	}
+	defer conn.Close()
+
+	err = conn.Ping()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		panic(err)
 	}
 
-	//...
-	return nil
-}
-
-func CreateOrg() error {
-	err := Connect()
-	if err != nil {
-		return fmt.Errorf("error creating org: %w", err)
-	}
-
-	//...
-	return nil
+	fmt.Println("Connected!")
 }

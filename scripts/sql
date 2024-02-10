@@ -1,0 +1,21 @@
+DROP TABLE IF EXISTS users;
+
+
+/*------CREATE TABLES------------*/
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    age INT,
+    first_name TEXT,
+    last_name TEXT,
+    email TEXT UNIQUE NOT NULL
+);
+
+
+/* ------- INSERT ------- */
+INSERT INTO users (age, email, first_name, last_name)
+VALUES (29, 'samuel.msbr@gmail.com', 'Samuel', 'Silva');
+
+
+/* ---- UPDATE ----- */
+
+UPDATE users SET first_name ='Sam', last_name 'CR7' WHERE id = 1;
