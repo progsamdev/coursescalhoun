@@ -19,3 +19,47 @@ VALUES (29, 'samuel.msbr@gmail.com', 'Samuel', 'Silva');
 /* ---- UPDATE ----- */
 
 UPDATE users SET first_name ='Sam', last_name 'CR7' WHERE id = 1;
+
+/* EXERCISE SECTION 10 - USING POSTGRES WITH GO */
+/*------CREATE TABLES------------*/
+
+CREATE EXTENSION "uuid-ossp";
+
+CREATE TABLE users (
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    age         INT,
+    first_name  TEXT,
+    last_name   TEXT,
+    email       TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE tweets (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id         UUID NOT NULL,
+    parent_tweet    UUID,
+    post_message    VARCHAR(255) NOT NULL,
+    CONSTRAINT fk_user
+      FOREIGN KEY(user_id) 
+	  REFERENCES users(id)
+	  ON DELETE CASCADE,
+    CONSTRAINT parent_tweet
+      FOREIGN KEY(parent_tweet) 
+	  REFERENCES tweets(id)
+	  ON DELETE CASCADE
+);
+
+
+CREATE TABLE likes (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id         UUID NOT NULL,
+    tweet_id        UUID NOT NULL,
+    CONSTRAINT fk_user
+      FOREIGN KEY(user_id) 
+	  REFERENCES users(id)
+	  ON DELETE CASCADE,
+    CONSTRAINT fk_tweet
+      FOREIGN KEY(tweet_id) 
+	  REFERENCES tweets(id)
+	  ON DELETE CASCADE
+);
+
