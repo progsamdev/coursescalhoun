@@ -46,3 +46,23 @@ func (u *UserService) hashPassword(password_raw string) (string, error) {
 	}
 	return string(hashedBytes), nil
 }
+
+func (u *UserService) Authenticate(email, password string) (*User, error) {
+	email = strings.ToLower(email)
+	user := User{Email: email}
+
+	row := u.DB.QueryRow(
+		`SELECT id, password_hash 
+					FROM users
+					WHERE email = $1`, user.Email)
+	err := row.Scan(&user.ID, &user.PasswordHarsh)
+
+	if err != nil {
+		return nil, fmt.Errorf("Authenticate failed: %w", err)
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHarsh), []byte(password))
+	if err != nil {
+		return nil, fmt.Errorf("Authenticate failed: %w", err)
+	}
+	return &user, nil
+}
