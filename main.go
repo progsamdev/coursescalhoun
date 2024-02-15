@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/progsamdev/coursescalhoun/controllers"
+	"github.com/progsamdev/coursescalhoun/models"
 	"github.com/progsamdev/coursescalhoun/templates"
 	"github.com/progsamdev/coursescalhoun/views"
 )
@@ -21,7 +23,17 @@ func main() {
 	tpl = views.Must(views.ParseFS(templates.FS, "contact.gohtml", "tailwind.gohtml"))
 	r.Get("/contact", controllers.StaticHandler(tpl))
 
-	usersC := controllers.Users{}
+	config := models.DefaultPostgresConfig()
+	db, err := models.Open(config)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		panic(err)
+	}
+	defer db.Close()
+
+	userSer := models.UserService{DB: db}
+
+	usersC := controllers.Users{UserService: &userSer}
 	usersC.Templates.New = views.Must(views.ParseFS(
 		templates.FS,
 		"signup.gohtml", "tailwind.gohtml",
