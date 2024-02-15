@@ -34,13 +34,20 @@ func main() {
 	userSer := models.UserService{DB: db}
 
 	usersC := controllers.Users{UserService: &userSer}
+
 	usersC.Templates.New = views.Must(views.ParseFS(
 		templates.FS,
 		"signup.gohtml", "tailwind.gohtml",
 	))
-	r.Get("/signup", usersC.New)
 
+	usersC.Templates.SignIn = views.Must(views.ParseFS(
+		templates.FS,
+		"signin.gohtml", "tailwind.gohtml",
+	))
+
+	r.Get("/signup", usersC.New)
 	r.Post("/signup", usersC.Create)
+	r.Get("/signin", usersC.SignIn)
 
 	tpl = views.Must(views.ParseFS(templates.FS, "faq.gohtml", "tailwind.gohtml"))
 	r.Get("/faq", controllers.FAQ(tpl))
