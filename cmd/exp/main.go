@@ -1,80 +1,41 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
-	"log"
 	"os"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
+	"github.com/progsamdev/coursescalhoun/models"
 )
 
-type PostgresConfig struct {
-	Host     string
-	Port     string
-	User     string
-	Password string
-	Database string
-	SSLMode  string
-}
+// type Tweet struct {
+// 	id          string
+// 	userId      string
+// 	postMessage string
+// }
 
-func (cfg PostgresConfig) toString() string {
-	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Database, cfg.SSLMode)
-}
+// func getNewTweet(t *User) *Tweet {
+// 	return &Tweet{
+// 		userId:      t.id,
+// 		postMessage: "New post on X",
+// 	}
+// }
 
-type User struct {
-	id        string
-	age       uint8
-	firstName string
-	lastName  string
-	email     string
-}
+// type Like struct {
+// 	userId  string
+// 	tweetId string
+// }
 
-func getNewUser() *User {
-	return &User{
-		firstName: "Test",
-		lastName:  "TestLastName",
-		age:       23,
-		email:     "tes2t22@demo33.com",
-	}
-}
-
-type Tweet struct {
-	id          string
-	userId      string
-	postMessage string
-}
-
-func getNewTweet(t *User) *Tweet {
-	return &Tweet{
-		userId:      t.id,
-		postMessage: "New post on X",
-	}
-}
-
-type Like struct {
-	userId  string
-	tweetId string
-}
-
-func getNewLike(t *Tweet, u *User) *Like {
-	return &Like{
-		userId:  u.id,
-		tweetId: t.id,
-	}
-}
+// func getNewLike(t *Tweet, u *User) *Like {
+// 	return &Like{
+// 		userId:  u.id,
+// 		tweetId: t.id,
+// 	}
+// }
 
 func main() {
-	cfg := PostgresConfig{
-		Host:     "localhost",
-		Port:     "5432",
-		User:     "baloo",
-		Password: "junglebook",
-		Database: "lenslocked",
-		SSLMode:  "disable",
-	}
-
-	conn, err := sql.Open("pgx", cfg.toString())
+	cfg := models.DefaultPostgresConfig()
+	conn, err := models.Open(cfg)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		panic(err)
@@ -88,7 +49,16 @@ func main() {
 	}
 	fmt.Println("Connected!")
 
-	// Begin a transaction
+	userSer := models.UserService{DB: conn}
+
+	user, err := userSer.Create("samuel.msbr2@gmail.com", "123aaa")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		panic(err)
+	}
+	fmt.Println(user)
+
+	/*// Begin a transaction
 	tx, err := conn.Begin()
 	if err != nil {
 		log.Fatal(err)
@@ -130,5 +100,5 @@ func main() {
 
 	if err := tx.Commit(); err != nil {
 		log.Fatal(err)
-	}
+	} */
 }
