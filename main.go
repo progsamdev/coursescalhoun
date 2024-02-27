@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/gorilla/csrf"
 	"github.com/progsamdev/coursescalhoun/controllers"
 	"github.com/progsamdev/coursescalhoun/models"
 	"github.com/progsamdev/coursescalhoun/templates"
@@ -47,6 +48,7 @@ func main() {
 
 	r.Get("/signup", usersC.New)
 	r.Post("/signup", usersC.Create)
+
 	r.Get("/signin", usersC.SignIn)
 	r.Post("/signin", usersC.ProcessSignIn)
 
@@ -58,5 +60,10 @@ func main() {
 	})
 
 	fmt.Println("Starting the server on :3000...")
-	http.ListenAndServe(":3000", r)
+
+	csrfKey := "gMxYc0afnN5tQaFLLToTUKTIsRFR9AI"
+	csrfMw := csrf.Protect([]byte(csrfKey),
+		csrf.Secure(false),
+	)
+	http.ListenAndServe(":3000", csrfMw(r))
 }

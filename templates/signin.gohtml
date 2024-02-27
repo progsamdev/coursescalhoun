@@ -4,7 +4,10 @@
     <div class="bg-white px-8 py-8 border rounded-md shadow"> 
         <h1 class="pt-4 pb-2 text-center text-2xl font-bold text-gray-900"> Welcome! </h1>
         <form action="/signin" method="post">
-            <div class="pt-4 pb-2">  
+            <div class="pt-4 pb-2">          
+              <div class="hidden">
+                    {{ csrFieldFunc }} 
+                </div>
                 <div class="py-2">  
                     <label for="email" class="text-sm font-semibold text-gray-800">Username </label>
                     <input type="email" name="email" id="email" placeholder="your@email.com" required autocomplete="email" class="block px-3 py-2 w-full border bolder-gray-300 placeholder-gray-400 text-gray-800 rounded"
