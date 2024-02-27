@@ -2,10 +2,12 @@ package views
 
 import (
 	"fmt"
+	"html/template"
 	"io/fs"
 	"log"
 	"net/http"
-	"text/template"
+
+	"github.com/gorilla/csrf"
 )
 
 type Template struct {
@@ -19,8 +21,17 @@ func Must(t *Template, err error) *Template {
 	return t
 }
 
-func ParseFS(fs fs.FS, pattern ...string) (*Template, error) {
-	tpl, err := template.ParseFS(fs, pattern...)
+func ParseFS(fs fs.FS, patterns ...string) (*Template, error) {
+	tpl := template.New(patterns[0])
+	tpl = tpl.Funcs(
+		template.FuncMap{
+			"csrFieldFunc": func() template.HTML {
+				return `<!--csrFieldFuncPlaceholder-->`
+			},
+		},
+	)
+
+	tpl, err := tpl.ParseFS(fs, patterns...)
 	if err != nil {
 		log.Printf("parsing template %v", err)
 		return &Template{}, fmt.Errorf("parse fs template: %w", err)
@@ -31,7 +42,7 @@ func ParseFS(fs fs.FS, pattern ...string) (*Template, error) {
 	return &t, nil
 }
 
-func Parse(filePath string) (*Template, error) {
+/*func Parse(filePath string) (*Template, error) {
 	tpl, err := template.ParseFiles(filePath)
 	if err != nil {
 		log.Printf("parsing template %v", err)
@@ -41,11 +52,25 @@ func Parse(filePath string) (*Template, error) {
 		htmlTpl: tpl,
 	}
 	return &t, nil
-}
+}*/
 
-func (t Template) Execute(w http.ResponseWriter, data interface{}) {
+func (t Template) Execute(w http.ResponseWriter, r *http.Request, data interface{}) {
+	tpl, err := t.htmlTpl.Clone()
+	if err != nil {
+		log.Printf("cloning template: %v", err)
+		http.Error(w, "There was an error rendering the page.", http.StatusInternalServerError)
+		return
+	}
+
+	tpl = tpl.Funcs(
+		template.FuncMap{
+			"csrFieldFunc": func() template.HTML {
+				return csrf.TemplateField(r)
+			},
+		},
+	)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	err := t.htmlTpl.Execute(w, data)
+	err = tpl.Execute(w, data)
 	if err != nil {
 		log.Printf("parsing template %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
