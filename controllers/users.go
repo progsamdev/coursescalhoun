@@ -36,6 +36,15 @@ func (u Users) Create(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "user created: %+v", user)
 }
 
+func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("name_test")
+	if err != nil {
+		u.Templates.New.Execute(w, r, nil)
+		return
+	}
+	fmt.Fprintf(w, "cookie value: %s\n", cookie.Value)
+}
+
 func (u Users) SignIn(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		Email string
@@ -58,13 +67,15 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Something went wrong.", http.StatusInternalServerError)
 		return
 	}
+
 	cookie := http.Cookie{
-		Name:     "exercise1",
-		Value:    "exercise1value",
+		Name:     "name_test",
+		Value:    "value_test",
 		Path:     "/signin",
 		Secure:   true,
 		HttpOnly: true,
 	}
 	http.SetCookie(w, &cookie)
+
 	fmt.Fprintf(w, "User authenticated: %+v", user)
 }
