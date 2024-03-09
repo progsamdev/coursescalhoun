@@ -32,9 +32,18 @@ func main() {
 	}
 	defer db.Close()
 
-	userSer := models.UserService{DB: db}
+	userSer := models.UserService{
+		DB: db,
+	}
 
-	usersC := controllers.Users{UserService: &userSer}
+	sessionService := models.SessionService{
+		DB: db,
+	}
+
+	usersC := controllers.Users{
+		UserService:    &userSer,
+		SessionService: &sessionService,
+	}
 
 	usersC.Templates.New = views.Must(views.ParseFS(
 		templates.FS,
