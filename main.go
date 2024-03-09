@@ -40,7 +40,7 @@ func main() {
 		DB: db,
 	}
 
-	usersC := controllers.Users{
+	usersC := controllers.User{
 		UserService:    &userSer,
 		SessionService: &sessionService,
 	}
@@ -61,6 +61,7 @@ func main() {
 	r.Get("/signin", usersC.SignIn)
 	r.Post("/signin", usersC.ProcessSignIn)
 	r.Get("/users/me", usersC.CurrentUser)
+	r.Post("/signout", usersC.ProcessSignOut) //could be delete
 
 	tpl = views.Must(views.ParseFS(templates.FS, "faq.gohtml", "tailwind.gohtml"))
 	r.Get("/faq", controllers.FAQ(tpl))

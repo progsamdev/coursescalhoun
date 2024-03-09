@@ -7,17 +7,16 @@ import (
 	"github.com/progsamdev/coursescalhoun/models"
 )
 
-type Users struct {
+type User struct {
 	Templates struct {
 		New    Template
 		SignIn Template
 	}
-
 	UserService    *models.UserService
 	SessionService *models.SessionService
 }
 
-func (u Users) New(w http.ResponseWriter, r *http.Request) {
+func (u User) New(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		Email string
 	}
@@ -25,7 +24,7 @@ func (u Users) New(w http.ResponseWriter, r *http.Request) {
 	u.Templates.New.Execute(w, r, data)
 }
 
-func (u Users) Create(w http.ResponseWriter, r *http.Request) {
+func (u User) Create(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 	user, err := u.UserService.Create(email, password)
@@ -45,7 +44,7 @@ func (u Users) Create(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/users/me", http.StatusFound)
 }
 
-func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
+func (u User) CurrentUser(w http.ResponseWriter, r *http.Request) {
 	token, err := readCookie(r, CookieSession)
 	if err != nil {
 		fmt.Println(err)
@@ -61,7 +60,7 @@ func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Current user: %s\n", user)
 }
 
-func (u Users) SignIn(w http.ResponseWriter, r *http.Request) {
+func (u User) SignIn(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		Email string
 	}
@@ -69,7 +68,7 @@ func (u Users) SignIn(w http.ResponseWriter, r *http.Request) {
 	u.Templates.SignIn.Execute(w, r, data)
 }
 
-func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
+func (u User) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		Email    string
 		Password string
@@ -90,4 +89,20 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 	}
 	setCookie(w, CookieSession, session.NewSessionToken)
 	http.Redirect(w, r, "/users/me", http.StatusFound)
+}
+
+func (u User) ProcessSignOut(w http.ResponseWriter, r *http.Request) {
+	token, err := readCookie(r, CookieSession)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+	err = u.SessionService.Delete(token)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		return
+	}
+	deleteCookie(w, CookieSession)
+	http.Redirect(w, r, "/signin", http.StatusFound)
 }
