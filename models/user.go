@@ -9,9 +9,9 @@ import (
 )
 
 type User struct {
-	ID            string
-	Email         string
-	PasswordHarsh string
+	ID           string
+	Email        string
+	PasswordHash string
 }
 
 type UserService struct {
@@ -25,12 +25,12 @@ func (u *UserService) Create(email, password_raw string) (*User, error) {
 		return nil, fmt.Errorf("error creating user: %w", err)
 	}
 	newUser := User{
-		Email:         email,
-		PasswordHarsh: password_hash,
+		Email:        email,
+		PasswordHash: password_hash,
 	}
 	row := u.DB.QueryRow(
 		`INSERT INTO users(email, password_hash)
-		VALUES ($1, $2) RETURNING id`, newUser.Email, newUser.PasswordHarsh,
+		VALUES ($1, $2) RETURNING id`, newUser.Email, newUser.PasswordHash,
 	)
 	err = row.Scan((&newUser.ID))
 	if err != nil {
@@ -55,12 +55,12 @@ func (u *UserService) Authenticate(email, password string) (*User, error) {
 		`SELECT id, password_hash 
 					FROM users
 					WHERE email = $1`, user.Email)
-	err := row.Scan(&user.ID, &user.PasswordHarsh)
+	err := row.Scan(&user.ID, &user.PasswordHash)
 
 	if err != nil {
 		return nil, fmt.Errorf("Authenticate failed: %w", err)
 	}
-	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHarsh), []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
 		return nil, fmt.Errorf("Authenticate failed: %w", err)
 	}
