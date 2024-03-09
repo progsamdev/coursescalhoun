@@ -36,8 +36,11 @@ func main() {
 		DB: db,
 	}
 
+	tokenManager := models.TokenManager{}
+
 	sessionService := models.SessionService{
-		DB: db,
+		DB:           db,
+		TokenManager: tokenManager,
 	}
 
 	usersC := controllers.User{
@@ -53,6 +56,11 @@ func main() {
 	usersC.Templates.SignIn = views.Must(views.ParseFS(
 		templates.FS,
 		"signin.gohtml", "tailwind.gohtml",
+	))
+
+	usersC.Templates.CurrentUser = views.Must(views.ParseFS(
+		templates.FS,
+		"currentuser.gohtml", "tailwind.gohtml",
 	))
 
 	r.Get("/signup", usersC.New)

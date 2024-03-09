@@ -9,8 +9,9 @@ import (
 
 type User struct {
 	Templates struct {
-		New    Template
-		SignIn Template
+		New         Template
+		SignIn      Template
+		CurrentUser Template
 	}
 	UserService    *models.UserService
 	SessionService *models.SessionService
@@ -57,7 +58,7 @@ func (u User) CurrentUser(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/signin", http.StatusFound)
 		return
 	}
-	fmt.Fprintf(w, "Current user: %s\n", user)
+	u.Templates.CurrentUser.Execute(w, r, user)
 }
 
 func (u User) SignIn(w http.ResponseWriter, r *http.Request) {
