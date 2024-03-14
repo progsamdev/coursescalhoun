@@ -1,8 +1,10 @@
 package views
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
+	"io"
 	"io/fs"
 	"log"
 	"net/http"
@@ -25,8 +27,8 @@ func ParseFS(fs fs.FS, patterns ...string) (*Template, error) {
 	tpl := template.New(patterns[0])
 	tpl = tpl.Funcs(
 		template.FuncMap{
-			"csrFieldFunc": func() template.HTML {
-				return `<!--csrFieldFuncPlaceholder-->`
+			"csrFieldFunc": func() (template.HTML, error) {
+				return "", fmt.Errorf("csrfield not implemented")
 			},
 		},
 	)
@@ -70,10 +72,12 @@ func (t Template) Execute(w http.ResponseWriter, r *http.Request, data interface
 		},
 	)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	err = tpl.Execute(w, data)
+	var buff bytes.Buffer
+	err = tpl.Execute(&buff, data) //buff will execute before to check any errors. Perfomance may be risk.
 	if err != nil {
 		log.Printf("parsing template %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	io.Copy(w, &buff) //this prevent half page rendered issue.
 }

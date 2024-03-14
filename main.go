@@ -32,9 +32,21 @@ func main() {
 	}
 	defer db.Close()
 
-	userSer := models.UserService{DB: db}
+	userSer := models.UserService{
+		DB: db,
+	}
 
-	usersC := controllers.Users{UserService: &userSer}
+	tokenManager := models.TokenManager{}
+
+	sessionService := models.SessionService{
+		DB:           db,
+		TokenManager: tokenManager,
+	}
+
+	usersC := controllers.User{
+		UserService:    &userSer,
+		SessionService: &sessionService,
+	}
 
 	usersC.Templates.New = views.Must(views.ParseFS(
 		templates.FS,
@@ -46,11 +58,18 @@ func main() {
 		"signin.gohtml", "tailwind.gohtml",
 	))
 
+	usersC.Templates.CurrentUser = views.Must(views.ParseFS(
+		templates.FS,
+		"currentuser.gohtml", "tailwind.gohtml",
+	))
+
 	r.Get("/signup", usersC.New)
 	r.Post("/signup", usersC.Create)
 
 	r.Get("/signin", usersC.SignIn)
 	r.Post("/signin", usersC.ProcessSignIn)
+	r.Get("/users/me", usersC.CurrentUser)
+	r.Post("/signout", usersC.ProcessSignOut) //could be delete
 
 	tpl = views.Must(views.ParseFS(templates.FS, "faq.gohtml", "tailwind.gohtml"))
 	r.Get("/faq", controllers.FAQ(tpl))
