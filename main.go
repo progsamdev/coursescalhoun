@@ -25,6 +25,7 @@ func main() {
 	r.Get("/contact", controllers.StaticHandler(tpl))
 
 	config := models.DefaultPostgresConfig()
+	fmt.Println(config.ToString())
 	db, err := models.Open(config)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)

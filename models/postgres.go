@@ -27,12 +27,12 @@ type PostgresConfig struct {
 	SSLMode  string
 }
 
-func (config PostgresConfig) toString() string {
+func (config PostgresConfig) ToString() string {
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", config.Host, config.Port, config.User, config.Password, config.Database, config.SSLMode)
 }
 
 func Open(config PostgresConfig) (*sql.DB, error) {
-	conn, err := sql.Open("pgx", config.toString())
+	conn, err := sql.Open("pgx", config.ToString())
 	if err != nil {
 		return nil, fmt.Errorf("error opening db: %w", err)
 	}
